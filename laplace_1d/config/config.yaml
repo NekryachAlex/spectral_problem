@@ -1,0 +1,64 @@
+problem:
+  name: laplace_1d
+  spatial_dim: 1
+  x_max: 3.141592653589793
+  lambda_min: 0.5
+  lambda_max: 18
+  nontriviality_a: 100.0
+  nontriviality_b: 1.0
+
+model:
+  type: PirateNet
+  params:
+    hidden_size: 256
+    num_blocks: 1
+    gamma: 0.5
+    nonlinearity: 0.0
+
+regularization:
+  type: AdaptiveConditions
+  initialization: equal
+  lr: 0.0001
+
+generator:
+  domain_points: 30000
+  boundary_points_per_condition: 5000
+  sampler: pseudo
+
+trainer:
+  num_epochs: 140000
+  num_batches: 1
+  grid_update: 1000
+  random_seed: 17
+  device: auto
+
+optimizer:
+  lr: 0.0001
+
+scheduler:
+  gamma: 0.99997
+
+artifacts:
+  save_period: 1500
+
+evaluation:
+  lambda_points: 101
+  spatial_points_per_axis: 128
+  chunk_size: 4096
+  min_rms: 0.000001
+  min_peak: 0.000001
+
+paths:
+  save_dir: ${hydra:runtime.output_dir}
+
+hydra:
+  job:
+    chdir: false
+  run:
+    dir: ${hydra:runtime.cwd}/artifacts/${problem.name}/seed_${trainer.random_seed}/${now:%Y-%m-%d_%H-%M-%S}
+  sweep:
+    dir: ${hydra:runtime.cwd}/artifacts/${problem.name}/${now:%Y-%m-%d_%H-%M-%S}
+    subdir: seed_${trainer.random_seed}
+  sweeper:
+    params:
+      trainer.random_seed: 17,43,101,257,7919

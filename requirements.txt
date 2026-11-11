@@ -1,0 +1,5 @@
+# Install the existing cluster/local MultiPINN checkout separately; see README.md.
+torch
+numpy
+hydra-core
+matplotlib
